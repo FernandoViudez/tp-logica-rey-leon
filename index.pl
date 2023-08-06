@@ -61,3 +61,58 @@ condiciones(Personaje):-
   (comio(Personaje, Cucaracha), jugosita(Cucaracha), esPersonaje(Personaje));
   comio(Personaje, vaquitaSanAntonio(remeditos,_)).
 
+# 2)
+persigue(scar, timon). 
+persigue(scar, pumba). 
+persigue(shenzi, simba). 
+persigue(shenzi, scar). 
+persigue(banzai, timon).
+persigue(scar, mufasa). 
+
+# a
+cuantoEngordaA(Personaje, PesoTotal):-
+    esPersonaje(Personaje),
+    findall(PesoBicho, (comio(Personaje, Bicho), pesoBicho(Bicho, PesoBicho)), PesosBichos),
+    sumlist(PesosBichos, PesoTotal).
+  
+pesoBicho(hormiga(_), Peso) :- pesoHormiga(Peso).
+pesoBicho(cucaracha(_, _, Peso), Peso).
+pesoBicho(vaquitaSanAntonio(_,Peso), Peso).
+
+# b
+cuantoEngordaB(Personaje, PesoTotalEngordado):-
+    esPersonaje(Personaje),
+    findall(PesoQueEngorda, condiciones(Personaje, PesoQueEngorda) ,PesosQueEngorda),
+    sumlist(PesosQueEngorda, PesoTotalEngordado).
+
+condiciones(Personaje, PesoQueEngorda):-
+    (  persigue(Personaje,Animal), 
+       peso(Animal, PesoQueEngorda) );
+    (  comio(Personaje, Bicho),
+       pesoBicho(Bicho, PesoQueEngorda) ).
+
+# 3)
+combinaComidas(Personaje, ListaComidas):-
+    esPersonaje(Personaje),
+    findall(CosaQueCome, (comio(Personaje, CosaQueCome) ; persigue(Personaje, CosaQueCome)), ListaComidas).
+
+# 4)
+rey(Personaje) :-
+    esPersonaje(Personaje),
+    findall(Animal, (esPersonaje(Animal), Animal \= Personaje), Todos),
+    adoradoPorTodos(Todos, Personaje),
+    perseguidoPorUno(Personaje).
+
+adora(Personaje, Otro) :-
+    not(persigue(Otro, Personaje)),
+    not(comio(Otro, Personaje)).
+
+adoradoPorTodos([], _).
+adoradoPorTodos([Cabeza | Cola], Personaje) :-
+    adora(Cabeza, Personaje),
+    adoradoPorTodos(Cola, Personaje).
+
+perseguidoPorUno(Personaje) :-
+    findall(Depredador, persigue(Depredador, Personaje), Depredadores),
+    length(Depredadores, Cant),
+    Cant = 1.
