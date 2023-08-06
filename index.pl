@@ -52,13 +52,12 @@ cucarachofobico(Personaje):-
   not(comio(Personaje, cucaracha(_,_,_))).
 
 # d
-picarones(pumba).
-picarones(Personaje):-
-  esPersonaje(Personaje),
-  comio(Personaje, Cucaracha),
-  jugosita(Cucaracha).
+# d.
+picarones(Personajes):-
+  findall(Personaje, condiciones(Personaje), Personajes).
 
-picarones(Personaje):-
-  esPersonaje(Personaje),
+condiciones(pumba).
+condiciones(Personaje):-
+  (comio(Personaje, Cucaracha), jugosita(Cucaracha), esPersonaje(Personaje));
   comio(Personaje, vaquitaSanAntonio(remeditos,_)).
 
